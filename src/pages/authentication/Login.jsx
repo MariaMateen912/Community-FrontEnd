@@ -13,8 +13,13 @@ import {
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+
 
 function Login() {
+
+  const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
     emailId: "", 
     password: "",
@@ -38,14 +43,13 @@ function Login() {
     return error;
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
+    
     try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/login",
         {
-          emailId: credentials.emailId,
-          password: credentials.password,
+         ...values
         },
         {
           headers: {
@@ -55,6 +59,12 @@ function Login() {
       );
 
       console.log(response.data);
+      if (response.data.role == "citizen") {
+        navigate('/citizen')
+
+      }
+      else if (response.data.role == "corporator") {
+      }
     } catch (error) {
       console.error("Error during login:", error);
     }
@@ -87,7 +97,7 @@ function Login() {
                       isInvalid={form.errors.username && form.touched.username}
                     >
                       <FormLabel>Username</FormLabel>
-                      <Input {...field} placeholder="username" onChange={onChange} />
+                      <Input {...field} placeholder="username" onChange={field.onChange} />
                       <FormErrorMessage>
                         {form.errors.username}
                       </FormErrorMessage>
@@ -105,7 +115,7 @@ function Login() {
                         {...field}
                         placeholder="password"
                         type="password"
-                        onChange={onChange}
+                        onChange={field.onChange}
                       />
                       <FormErrorMessage>
                         {form.errors.password}

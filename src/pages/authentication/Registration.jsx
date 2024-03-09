@@ -115,7 +115,10 @@ function Registration() {
       const response = await axios.post(
         "http://localhost:3000/api/auth/register",
         {
-          ...values, // Pass the form values directly to the server
+          ...values,
+          role
+          
+          // Pass the form values directly to the server
         },
         {
           headers: {
@@ -126,9 +129,13 @@ function Registration() {
   
       const json = response.data;
       console.log(json);
+      console.log(json.success);
   
       if (json.success) {
         localStorage.setItem("token", json.authoken);
+        alert("Registration successful");
+
+
         // Redirect or handle success as needed
         // For example, you can use React Router to navigate to another page:
         // history.push("/");
