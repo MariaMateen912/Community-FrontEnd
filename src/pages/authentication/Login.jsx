@@ -64,6 +64,7 @@ function Login() {
 
       }
       else if (response.data.role == "corporator") {
+        navigate('/corporator')
       }
     } catch (error) {
       console.error("Error during login:", error);

@@ -24,30 +24,26 @@ import { useNavigate } from "react-router-dom";
 import ImageSlider from '../components/ImageSlider';
 
 
-function Citizen()  {
+function Corporator()  {
   const theme = useTheme();
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
-
   const navigate = useNavigate();
   const handleCalendarButtonClick = () => {
     // Redirect to the Calendar page
-    navigate('/citizen/calendar');
+    navigate('/corporator/calendar');
   };
-
-  const handleSgrivienceButtonClick = () => {
-    navigate('/citizen/sgrievance');
-  }
-
-
-
+  
+const handleVgrivienceButtonClick =() => {
+  navigate('/corporator/vgrievance');
+}
   return (
     <>
       <Header />
       <Box>
         <Center mt={10} display="flex" flexDirection="column">
           <Heading> Welcome to the Community,</Heading>
-          <Heading>Beautiful citizens of NIBM</Heading>   
+          <Heading>Corporator of NIBM</Heading>   
           </Center>
       </Box>
       <Box> <Center>
@@ -112,19 +108,9 @@ function Citizen()  {
   color={theme.colors.brand.white}
   bg={theme.colors.brand.gradientGreen}
   type="submit"
+  onClick={handleVgrivienceButtonClick}
 >
-  Contact Corporator
-</Button>
-
-<Button
-  mt={10}
-  ml={5}
-  color={theme.colors.brand.white}
-  bg={theme.colors.brand.gradientGreen}
-  type="submit"
-  onClick={handleSgrivienceButtonClick}
->
-Grivience Section
+  View Grievances
 </Button>
 
           </DrawerBody>
@@ -137,12 +123,12 @@ Grivience Section
         </DrawerContent>
       </Drawer>
       </Box>
-
-      <ImageSlider/>
+     
+      <ImageSlider />
       
     </>
   );
 }
 
 
-export default Citizen;
+export default Corporator;

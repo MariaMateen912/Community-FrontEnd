@@ -10,25 +10,50 @@ function MyCalendar() {
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [eventTitle, setEventTitle] = useState('');
+  const [selectEvent, setSelectEvent] = useState(null);
 
   const handleSelectSlot = (slotInfo) => {
     setShowModal(true);
     setSelectedDate(slotInfo.start);
+    setSelectEvent(null);
   };
-
+  const handleSelectedEvent =(event) => {
+    setShowModal(true);
+    setSelectEvent(event);
+    setEventTitle(event.title);
+  }
   const saveEvent = () => {
     if (eventTitle && selectedDate) {
-      const newEvent = {
-        title: eventTitle,
-        start: selectedDate,
-        end: moment(selectedDate).add(1, 'hours').toDate(),
-      };
-      setEvents([...events, newEvent]);
+      if (selectEvent) {
+        const updatedEvent = { ...selectEvent, title: eventTitle };
+        const updatedEvents = events.map((event) =>
+          event === selectEvent ? updatedEvent : event
+        );
+        setEvents(updatedEvents);
+      } else {
+        const newEvent = {
+          title: eventTitle,
+          start: selectedDate,
+          end: moment(selectedDate)
+            .add(1, "hours")
+            .toDate(),
+        };
+        setEvents([...events, newEvent]);
+      }
       setShowModal(false);
-      setEventTitle('');
-      setSelectedDate(null);
+      setEventTitle("");
+      setSelectEvent(null);
     }
   };
+  const deleteEvents = () =>{
+    if (selectEvent){
+      const updatedEvents = events.filter((event) => event !== selectEvent);
+      setEvents(updatedEvents);
+      setShowModal(false);
+      setEventTitle('');
+      setSelectEvent(null);
+    }
+  }
 
   const closeModal = () => {
     setShowModal(false);
@@ -46,6 +71,7 @@ function MyCalendar() {
         style={{ margin: '50' }}
         selectable={true}
         onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectedEvent}
       />
       {showModal && (
         <div
@@ -64,11 +90,19 @@ function MyCalendar() {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Add Event</h5>
+                <h5 className="modal-title">
+                  {selectEvent ? 'Edit Event': 'Add Event'}
+                  </h5>
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={closeModal}
+                  onClick={() =>
+                  {
+                    setShowModal(false);
+                    setEventTitle('');
+                    setSelectEvent(null);
+                    
+                  }}
                   aria-label="Close"
                 ></button>
               </div>
@@ -82,12 +116,21 @@ function MyCalendar() {
                 />
               </div>
               <div className="modal-footer">
+                {selectEvent &&(
+                <button
+                  type="button"
+                  className="btn btn-danger me-2"
+                  onClick={deleteEvents}
+                >
+                 Delete Events
+                </button>
+                )}
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={saveEvent}
                 >
-                  Save changes
+                  Save
                 </button>
               </div>
             </div>

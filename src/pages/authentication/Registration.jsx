@@ -84,7 +84,7 @@ function Registration() {
 
   function validateVoterId(value) {
     let error;
-    const validVoterIds = new Set(["EAX2124325", "GDN0225185", "UTC026351"]); // Add your valid voterIds here
+    const validVoterIds = new Set(["EAX2124325", "GDN0225185", "UTC026351","HYUI76543","KHBGFD378"]); // Add your valid voterIds here
 
     if (!value) {
       error = "Voter ID is required";
