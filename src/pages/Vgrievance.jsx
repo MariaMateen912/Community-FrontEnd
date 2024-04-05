@@ -7,7 +7,7 @@ import {
   Tr,
   Th,
   Td,
-  TableCaption,
+  TableCaption,Button,
 } from '@chakra-ui/react';
 import axios from 'axios';
 function Vgrievance() {
@@ -30,12 +30,22 @@ function Vgrievance() {
     }, []);
   
 
+    const handleDelete = async (id) => {
+      try {
+        await axios.delete(`http://localhost:3000/api/grievance/delete-grievance/${id}`);
+        setGrievances(grievances.filter((grievance) => grievance._id !== id));
+      } catch (error) {
+        console.error('Error deleting grievance:', error);
+      }
+    };
+
   return (
     <Box>
     <Table variant="striped" colorScheme="teal">
       <TableCaption>Registered Grievances</TableCaption>
       <Thead>
         <Tr>
+          <Th>Location</Th>
           <Th>Subject</Th>
           <Th>Complain</Th>
           <Th>Suggestion</Th>
@@ -44,9 +54,19 @@ function Vgrievance() {
       <Tbody>
         {grievances.map((grievance, index) => (
           <Tr key={index}>
+            <Td>{grievance.location}</Td>
             <Td>{grievance.subject}</Td>
             <Td>{grievance.complain}</Td>
             <Td>{grievance.suggestion}</Td>
+            <Td>
+                <Button
+                  colorScheme="red"
+                  size="sm"
+                  onClick={() => handleDelete(grievance._id)}
+                >
+                  Delete
+                </Button>
+                </Td>
           </Tr>
         ))}
       </Tbody>
@@ -55,4 +75,4 @@ function Vgrievance() {
 );
 }
   
-export default Vgrievance
+export default Vgrievance;

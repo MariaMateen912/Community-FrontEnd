@@ -10,23 +10,24 @@ import {
   Button,
   Input,
   useTheme,
-  Textarea,Radio,
-  RadioGroup,
-  Stack,
+  Select,
 } from "@chakra-ui/react";
 import { Formik, Form, Field } from "formik";
 import axios from "axios";
-function Sgrivience() {
+import ReactDatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+function Snotice() {
   const theme = useTheme();
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const authToken = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:3000/api/auth/submit-grievance",
+        "http://localhost:3000/api/auth/submit-notice",
         {
           ...values,
-          location: location,
+          
 
           // Pass the form values directly to the server
         },
@@ -45,106 +46,106 @@ function Sgrivience() {
 
       if (json.success) {
         localStorage.setItem("token", json.authoken);
-        alert("Complain registered successfully");
+        alert("Notice sent successfully");
 
       } else {
         // Handle registration failure
-        alert("Registration failed. Please check your input.");
+        alert("Notice failed. Please check your input.");
       }
     } catch (error) {
-      console.error("An error occurred while submitting complain:", error);
+      console.error("An error occurred while submitting notice:", error);
       // Handle the error appropriately, e.g., show an error message to the user
       alert(
-        "An error occurred while submitting complain. Please try again later."
+        "An error occurred while submitting notice. Please try again later."
       );
     } finally {
       // Set submitting to false after the form submission is complete
       setSubmitting(false);
     }
   };
-  const [location, setLocation] = useState('nibmRd');
-
-  // Validation function for checking character length
-  const validateLength = (value) => {
-    let error;
-    if (value && value.length > 15) { // Change 100 to your desired character limit
-      error = "Maximum character limit exceeded";
-    }
-    return error;
-  };
-
-
+ 
   return (
     <>
       <Header />
 
       <Box>
         <Center mt={10} display="flex" flexDirection="column">
-          <Heading> Grievance Form</Heading>
+          <Heading> Submit Notice</Heading>
         </Center>
       </Box>
       <Formik
         initialValues={{
-          location:"nibmRd",
-          subject: "",
-          complain: "",
-          suggestion: "",
+            meetingDate :"",
+        agenda: "",
+          place: "",
+          whom: "",
         }}
         onSubmit={handleSubmit}
       >
         {(props) => (
           <Form>
-             <Field name="location">
-              {({ field, form }) => (
-               <FormControl mt={5} ml={450}>
-               <FormLabel>Location</FormLabel>
-               <RadioGroup value={location} onChange={(value) => setLocation(value)}>
-
-                 <Stack spacing={4} direction='row'>
-                   <Radio value="nibmRd">NIBM Rd</Radio>
-                   <Radio value="kausarBaug">Kausar Baug</Radio>
-                   <Radio value="pargeNagar">Parge Nagar</Radio>
-                 </Stack>
-               </RadioGroup>
-             </FormControl>
-              )}
-            </Field>
-            <Field name="subject" validate={validateLength}>
+             <Field name="meetingDate">
+    {({ field, form }) => (
+      <FormControl mt={5} ml={450}> {/* Add margin and padding here */}
+        <FormLabel htmlFor="meetingDate">Meeting Date</FormLabel> {/* Move htmlFor here */}
+        {/* Date Picker Component */}
+        <ReactDatePicker
+          id="meetingDate"
+          selected={field.value} // Assuming field.value contains the date value
+          onChange={date => form.setFieldValue(field.name, date)} // Update field value on change
+          style={{ marginTop: '8px' }} // Add margin top directly to ReactDatePicker
+        />
+      </FormControl>
+    )}
+  </Field>
+            <Field name="agenda" >
               {({ field, form }) => (
                 <FormControl mt={10} ml={450}>
-                  <FormLabel>Subject</FormLabel>
+                  <FormLabel>Agenda</FormLabel>
                   <Input {...field} 
                   maxWidth="300px"
-                  placeholder="Subject of your complain" />
+                  placeholder="Enter your meeting's agenda" />
                   <FormErrorMessage>{form.errors.subject}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-            <Field name="complain">
+            <Field name="place">
               {({ field, form }) => (
                 <FormControl mt={5} ml={450}>
-                  <FormLabel>Your Complain</FormLabel>
+                  <FormLabel>Place of the meeting</FormLabel>
                   <Input
                     {...field}
                     width={{ base: "full", md: "400px" }}
-                    placeholder="Enter your complain in brief"
+                    placeholder="Enter the exact place"
                   />
                  
                 </FormControl>
               )}
             </Field>
-            <Field name="suggestion" >
-              {({ field, form }) => (
-                <FormControl mt={5} ml={450}>
-                  <FormLabel>Any suggestions</FormLabel>
-                  <Input
-                    {...field}
-                    width={{ base: "full", md: "400px" }}
-                    placeholder="Do you have any suggestion for your complain"
-                  />
-                </FormControl>
-              )}
-            </Field>
+            
+
+            <Field name="whom">
+  {({ field, form }) => (
+    <FormControl mt={5} ml={450}>
+      <FormLabel>For Whom</FormLabel>
+      <Input
+        {...field}
+        placeholder="Only the specified people should attend the meeting"
+      />
+      {/* Dropdown Component */}
+      <Select
+        mt={2} // Adjust margin top as needed
+        value={field.value} // Assuming field.value contains the selected place
+        onChange={e => form.setFieldValue(field.name, e.target.value)} // Update field value on change
+      >
+        <option value="">Select People Invloved</option>
+        <option value="Chairman">Only Society Chairman</option>
+        <option value="citizens">All citizens</option>
+        {/* Add more options as needed */}
+      </Select>
+    </FormControl>
+  )}
+</Field>
 
             <Button
               mt={20}
@@ -163,4 +164,4 @@ function Sgrivience() {
   );
 }
 
-export default Sgrivience;
+export default Snotice;

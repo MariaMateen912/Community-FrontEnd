@@ -47,10 +47,13 @@ function Registration() {
     let error;
     if (!value) {
       error = "Email Id is required";
+    } else if (!/\S+@\S+\.\S+/.test(value)) {
+      error = "Invalid email address";
     }
-
+  
     return error;
   }
+  
 
   function validatemobileNo(value) {
     let error;
@@ -65,14 +68,7 @@ function Registration() {
     return error;
   }
 
-  function validateaddress(value) {
-    let error;
-    if (!value) {
-      error = "Address is required";
-    }
-
-    return error;
-  }
+ 
 
   function validatePassword(value) {
     let error;
@@ -101,11 +97,10 @@ function Registration() {
     emailId: "",
     voterId: "",
     mobileNo: "",
-    address: "",
     password: "",
   }); 
   const {
-    firstName, lastName , emailId , voterId , mobileNo , address , password}=credentials;
+    firstName, lastName , emailId , voterId , mobileNo  , password}=credentials;
 
 
  
@@ -165,10 +160,9 @@ function Registration() {
               initialValues={{
                 firstName: "",
                 lastName: "",
-                emailId: "",
+                emailId : "",
                 voterId: "",
                 mobileNo: "",
-                address: "",
                 password: "",
               }}
               onSubmit={handleSubmit}
@@ -271,23 +265,7 @@ function Registration() {
                     )}
                   </Field>
 
-                  <Field name="address" validate={validateaddress}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={form.errors.address && form.touched.address}
-                      >
-                        <FormLabel>Address</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="Address"
-                          onChange={field.onChange}
-                        />
-                        <FormErrorMessage>
-                          {form.errors.address}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+                 
 
                   <Field name="password" validate={validatePassword}>
                     {({ field, form }) => (
