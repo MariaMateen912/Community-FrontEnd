@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Header from "../../components/Header";
 import {
@@ -19,7 +20,7 @@ import axios from "axios";
 function Registration() {
   const theme = useTheme();
   const [role, setRole] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     let localRole = localStorage.getItem("role");
     setRole(localRole);
@@ -50,10 +51,9 @@ function Registration() {
     } else if (!/\S+@\S+\.\S+/.test(value)) {
       error = "Invalid email address";
     }
-  
+
     return error;
   }
-  
 
   function validatemobileNo(value) {
     let error;
@@ -68,8 +68,6 @@ function Registration() {
     return error;
   }
 
- 
-
   function validatePassword(value) {
     let error;
     if (!value) {
@@ -80,7 +78,13 @@ function Registration() {
 
   function validateVoterId(value) {
     let error;
-    const validVoterIds = new Set(["EAX2124325", "GDN0225185", "UTC026351","HYUI76543","KHBGFD378"]); // Add your valid voterIds here
+    const validVoterIds = new Set([
+      "EAX2124325",
+      "GDN0225185",
+      "UTC026351",
+      "HYUI76543",
+      "KHBGFD378",
+    ]); // Add your valid voterIds here
 
     if (!value) {
       error = "Voter ID is required";
@@ -98,12 +102,9 @@ function Registration() {
     voterId: "",
     mobileNo: "",
     password: "",
-  }); 
-  const {
-    firstName, lastName , emailId , voterId , mobileNo  , password}=credentials;
-
-
- 
+  });
+  const { firstName, lastName, emailId, voterId, mobileNo, password } =
+    credentials;
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -111,8 +112,8 @@ function Registration() {
         "http://localhost:3000/api/auth/register",
         {
           ...values,
-          role
-          
+          role,
+
           // Pass the form values directly to the server
         },
         {
@@ -121,16 +122,15 @@ function Registration() {
           },
         }
       );
-  
+
       const json = response.data;
       console.log(json);
       console.log(json.success);
-  
+
       if (json.success) {
         localStorage.setItem("token", json.authoken);
         alert("Registration successful");
-
-
+        navigate("/login");
         // Redirect or handle success as needed
         // For example, you can use React Router to navigate to another page:
         // history.push("/");
@@ -145,165 +145,152 @@ function Registration() {
     } finally {
       // Set submitting to false after the form submission is complete
       setSubmitting(false);
-    };
+    }
   };
-  
-  
-    return (
-      <>
-        <Header />
 
-        <Box>
-          <Center mt={10} display="flex" flexDirection="column">
-            <Heading> Registration form for {role}</Heading>
-            <Formik
-              initialValues={{
-                firstName: "",
-                lastName: "",
-                emailId : "",
-                voterId: "",
-                mobileNo: "",
-                password: "",
-              }}
-              onSubmit={handleSubmit}
-            >
-              {(props) => (
-                <Form>
-                  <Field name="firstName" validate={validatefirstName}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.firstName && form.touched.firstName
-                        }
-                      >
-                        <FormLabel>First Name</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="First Name"
-                          onChange={field.onChange}
-                        />
-                        <FormErrorMessage>
-                          {form.errors.firstName}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+  return (
+    <>
+      <Header />
 
-                  <Field name="lastName" validate={validatelastName}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.lastName && form.touched.lastName
-                        }
-                      >
-                        <FormLabel>Last Name</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="Last Name"
-                          onChange={field.onChange}
-                        />
-                        <FormErrorMessage>
-                          {form.errors.lastName}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+      <Box>
+        <Center mt={10} display="flex" flexDirection="column">
+          <Heading> Registration form for {role}</Heading>
+          <Formik
+            initialValues={{
+              firstName: "",
+              lastName: "",
+              emailId: "",
+              voterId: "",
+              mobileNo: "",
+              password: "",
+            }}
+            onSubmit={handleSubmit}
+          >
+            {(props) => (
+              <Form>
+                <Field name="firstName" validate={validatefirstName}>
+                  {({ field, form }) => (
+                    <FormControl
+                      isInvalid={
+                        form.errors.firstName && form.touched.firstName
+                      }
+                    >
+                      <FormLabel>First Name</FormLabel>
+                      <Input
+                        {...field}
+                        placeholder="First Name"
+                        onChange={field.onChange}
+                      />
+                      <FormErrorMessage>
+                        {form.errors.firstName}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
 
-                  <Field name="emailId" validate={validateemailId}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={form.errors.emailId && form.touched.emailId}
-                      >
-                        <FormLabel>Email Id</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="abc@xyz.com"
-                          onChange={field.onChange}
-                        />
-                        <FormErrorMessage>
-                          {form.errors.emailId}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+                <Field name="lastName" validate={validatelastName}>
+                  {({ field, form }) => (
+                    <FormControl
+                      isInvalid={form.errors.lastName && form.touched.lastName}
+                    >
+                      <FormLabel>Last Name</FormLabel>
+                      <Input
+                        {...field}
+                        placeholder="Last Name"
+                        onChange={field.onChange}
+                      />
+                      <FormErrorMessage>
+                        {form.errors.lastName}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
 
-                  <Field name="voterId" validate={validateVoterId}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={form.errors.voterId && form.touched.voterId}
-                      >
-                        <FormLabel>Voter ID</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="Voter ID"
-                          onChange={field.onChange}
-                        />
-                        <FormErrorMessage>
-                          {form.errors.voterId}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+                <Field name="emailId" validate={validateemailId}>
+                  {({ field, form }) => (
+                    <FormControl
+                      isInvalid={form.errors.emailId && form.touched.emailId}
+                    >
+                      <FormLabel>Email Id</FormLabel>
+                      <Input
+                        {...field}
+                        placeholder="abc@xyz.com"
+                        onChange={field.onChange}
+                      />
+                      <FormErrorMessage>{form.errors.emailId}</FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
 
-                  <Field name="mobileNo" validate={validatemobileNo}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.mobileNo && form.touched.mobileNo
-                        }
-                      >
-                        <FormLabel>Mobile Number</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="+91.........."
-                          onChange={field.onChange}
-                        />
-                        <FormErrorMessage>
-                          {form.errors.mobileNo}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+                <Field name="voterId" validate={validateVoterId}>
+                  {({ field, form }) => (
+                    <FormControl
+                      isInvalid={form.errors.voterId && form.touched.voterId}
+                    >
+                      <FormLabel>Voter ID</FormLabel>
+                      <Input
+                        {...field}
+                        placeholder="Voter ID"
+                        onChange={field.onChange}
+                      />
+                      <FormErrorMessage>{form.errors.voterId}</FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
 
-                 
+                <Field name="mobileNo" validate={validatemobileNo}>
+                  {({ field, form }) => (
+                    <FormControl
+                      isInvalid={form.errors.mobileNo && form.touched.mobileNo}
+                    >
+                      <FormLabel>Mobile Number</FormLabel>
+                      <Input
+                        {...field}
+                        placeholder="+91.........."
+                        onChange={field.onChange}
+                      />
+                      <FormErrorMessage>
+                        {form.errors.mobileNo}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
 
-                  <Field name="password" validate={validatePassword}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.password && form.touched.password
-                        }
-                      >
-                        <FormLabel>Password</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="password"
-                          type="password"
-                          onChange={field.onChange}
-                        />
-                        <FormErrorMessage>
-                          {form.errors.password}
-                        </FormErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+                <Field name="password" validate={validatePassword}>
+                  {({ field, form }) => (
+                    <FormControl
+                      isInvalid={form.errors.password && form.touched.password}
+                    >
+                      <FormLabel>Password</FormLabel>
+                      <Input
+                        {...field}
+                        placeholder="password"
+                        type="password"
+                        onChange={field.onChange}
+                      />
+                      <FormErrorMessage>
+                        {form.errors.password}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
 
-                  <Button
-                    mt={4}
-                    color={theme.colors.brand.white}
-                    bg={theme.colors.brand.gradientGreen}
-                    isLoading={props.isSubmitting}
-                    type="submit"
-                  >
-                    Submit
-                  </Button>
-                </Form>
-              )}
-            </Formik>
-          </Center>
-        </Box>
-      </>
-    );
-  };
+                <Button
+                  mt={4}
+                  color={theme.colors.brand.white}
+                  bg={theme.colors.brand.gradientGreen}
+                  isLoading={props.isSubmitting}
+                  type="submit"
+                >
+                  Submit
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </Center>
+      </Box>
+    </>
+  );
+}
 
 export default Registration;
