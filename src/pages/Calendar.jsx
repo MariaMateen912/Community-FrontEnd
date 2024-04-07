@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
@@ -15,6 +15,27 @@ function MyCalendar() {
   const [eventTitle, setEventTitle] = useState("");
   const [selectEvent, setSelectEvent] = useState(null);
 
+  useEffect(() => {
+    const storedEvents = localStorage.getItem("events");
+    if (storedEvents) {
+      console.log("Stored events:", storedEvents);
+      try {
+        const parsedEvents = JSON.parse(storedEvents);
+        console.log("Retrieved events from local storage:", parsedEvents);
+        const formattedEvents = parsedEvents.map((event) => ({
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        }));
+        setEvents(formattedEvents);
+      } catch (error) {
+        console.error("Error parsing retrieved events:", error);
+      }
+    } else {
+      console.log("No events found in local storage.");
+    }
+  }, []);
+
   const handleSelectSlot = (slotInfo) => {
     setShowModal(true);
     setSelectedDate(slotInfo.start);
@@ -27,7 +48,51 @@ function MyCalendar() {
     setEventTitle(event.title);
   };
 
+  // const saveEvent = async () => {
+  //   const eventData = {
+  //     title: eventTitle,
+  //     start: selectedDate,
+  //   };
+  //   const response = await axios.post(
+  //     "http://localhost:3000/api/auth/events",
+  //     eventData
+  //   );
+  //   console.log(response.data.event._id);
+  //   const id = response.data.event._id;
+
+  //   const getresponse = await axios.post(
+  //     "http://localhost:3000/api/auth/getevents",
+  //     id
+  //   );
+  // };
+
   const saveEvent = async () => {
+    if (eventTitle && selectedDate) {
+      if (selectEvent) {
+        const updatedEvent = { ...selectEvent, title: eventTitle };
+        const updatedEvents = events.map((event) =>
+          event === selectEvent ? updatedEvent : event
+        );
+        console.log(updatedEvent);
+        setEvents(updatedEvents);
+      } else {
+        const newEvent = {
+          title: eventTitle,
+          start: selectedDate,
+          end: moment(selectedDate).add(1, "hours").toDate(),
+        };
+        console.log(newEvent);
+        const existingEvents = JSON.parse(localStorage.getItem("events")) || [];
+        const updatedEvents = [...existingEvents, newEvent];
+        localStorage.setItem("events", JSON.stringify(updatedEvents));
+
+        setEvents(updatedEvents);
+      }
+      setShowModal(false);
+      setEventTitle("");
+      setSelectEvent(null);
+    }
+
     const eventData = {
       title: eventTitle,
       start: selectedDate,
@@ -37,12 +102,6 @@ function MyCalendar() {
       eventData
     );
     console.log(response.data.event._id);
-    const id = response.data.event._id;
-
-    const getresponse = await axios.post(
-      "http://localhost:3000/api/auth/getevents",
-      id
-    );
   };
 
   const deleteEvent = async () => {
@@ -72,7 +131,7 @@ function MyCalendar() {
   return (
     <>
       <Header />
-      <div style={{ height: "500px", marginTop: "10px" }}>
+      <div style={{ height: "500px", marginTop: "30px" }}>
         <Calendar
           localizer={localizer}
           events={events}
