@@ -48,24 +48,6 @@ function MyCalendar() {
     setEventTitle(event.title);
   };
 
-  // const saveEvent = async () => {
-  //   const eventData = {
-  //     title: eventTitle,
-  //     start: selectedDate,
-  //   };
-  //   const response = await axios.post(
-  //     "http://localhost:3000/api/auth/events",
-  //     eventData
-  //   );
-  //   console.log(response.data.event._id);
-  //   const id = response.data.event._id;
-
-  //   const getresponse = await axios.post(
-  //     "http://localhost:3000/api/auth/getevents",
-  //     id
-  //   );
-  // };
-
   const saveEvent = async () => {
     if (eventTitle && selectedDate) {
       if (selectEvent) {
